@@ -88,8 +88,14 @@ namespace ds::mm {
     template<typename BlockType>
     BlockType* CompactMemoryManager<BlockType>::allocateMemoryAt(size_t index)
     {
+        if (this->end_ == this->limit_) {
+            this->changeCapacity(this->getCapacity() > 0 ? 2 * this->getCapacity() : this->INIT_SIZE);
+        }
         BlockType* adr = this->base_ + index;
-        std::memmove(adr + 1, adr, (this->end_ - adr) * sizeof(BlockType)); //memmove neposúva, ale kopíruje
+        if (index != this->allocatedBlockCount_) {
+            std::memmove(adr + 1, adr, (this->end_ - adr) * sizeof(BlockType)); //memmove neposúva, ale kopíruje
+        }
+        placement_new(adr);
         ++this->end_;
         ++this->allocatedBlockCount_;
         return adr;
@@ -98,25 +104,29 @@ namespace ds::mm {
     template<typename BlockType>
     void CompactMemoryManager<BlockType>::releaseMemory(BlockType* pointer)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        BlockType* cur = pointer;
+        while (cur != this->end_) {
+            destroy(cur);
+            ++cur;
+        }
+        this->end_ = pointer;
+        this->allocatedBlockCount_ = this->end_ - this->base_;
     }
 
     template<typename BlockType>
     void CompactMemoryManager<BlockType>::releaseMemoryAt(size_t index)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        BlockType* adr = this->base_ + index;
+        destroy(adr);
+        std::memmove(adr, adr + 1, (this->end_ - adr - 1) * sizeof(BlockType));
+        --this->end_;
+        --this->allocatedBlockCount_;
     }
 
     template<typename BlockType>
     void CompactMemoryManager<BlockType>::releaseMemory()
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        this->releaseMemoryAt(this->end_ - this->base_ - 1);
     }
 
     template<typename BlockType>
@@ -150,25 +160,37 @@ namespace ds::mm {
     template<typename BlockType>
     void CompactMemoryManager<BlockType>::changeCapacity(size_t newCapacity)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        if (newCapacity == this->getCapacity()) {
+			return;
+		}
+        void* newBase = nullptr;
+        if (newCapacity >= this->allocatedBlockCount_) {
+            newBase = std::realloc(this->base_, newCapacity * sizeof(BlockType));
+        } 
+        else {
+            this->releaseMemory(this->base_ + newCapacity);
+            newBase = std::realloc(this->base_, newCapacity * sizeof(BlockType));
+		}
+        if (newBase != this->base_) {
+            this->base_ = static_cast<BlockType*>(newBase);
+            this->limit_ = this->base_ + newCapacity;
+            this->end_ = this->base_ + this->allocatedBlockCount_;
+        }
     }
 
     template<typename BlockType>
     void CompactMemoryManager<BlockType>::clear()
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        this->releaseMemory(this->base_);
     }
 
     template<typename BlockType>
     bool CompactMemoryManager<BlockType>::equals(const CompactMemoryManager<BlockType>& other) const
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        return
+            this == &other ||
+            (this->allocatedBlockCount_ == other.allocatedBlockCount_ &&
+                std::memcmp(this->base_, other.base_, this->allocatedBlockCount_ * sizeof(BlockType)) == 0);
     }
 
     template<typename BlockType>
