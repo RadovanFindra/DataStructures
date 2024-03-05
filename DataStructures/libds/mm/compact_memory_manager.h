@@ -122,9 +122,7 @@ namespace ds::mm {
     template<typename BlockType>
     size_t CompactMemoryManager<BlockType>::getCapacity() const
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        return this->limit_ - this->base_;
     }
 
     template<typename BlockType>
@@ -176,17 +174,25 @@ namespace ds::mm {
     template<typename BlockType>
     void* CompactMemoryManager<BlockType>::calculateAddress(const BlockType& data)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        BlockType* current = this->base_;
+        while (current != this->end_)
+		{
+			if (current == &data)
+			{
+				return current;
+			}
+			++current;
+		}
+        return nullptr;
     }
 
     template<typename BlockType>
     size_t CompactMemoryManager<BlockType>::calculateIndex(const BlockType& data)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        if ( &data >= this->base_ && &data < this->end_) {
+        return &data - this->base_;
+    } else {
+		return INVALID_INDEX;
     }
 
     template<typename BlockType>
@@ -212,7 +218,7 @@ namespace ds::mm {
     template<typename BlockType>
     size_t CompactMemoryManager<BlockType>::getAllocatedCapacitySize() const
     {
-        return this->limit_ - this->base_;
+        return (this->limit_ - this->base_) * sizeof(BlockType);
     }
 
     template<typename BlockType>
