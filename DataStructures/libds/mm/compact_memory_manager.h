@@ -139,9 +139,24 @@ namespace ds::mm {
     CompactMemoryManager<BlockType>& CompactMemoryManager<BlockType>::assign
     (const CompactMemoryManager<BlockType>& other)
     {
-        // TODO 02
-        // po implementacii vymazte vyhodenie vynimky!
-        throw std::runtime_error("Not implemented yet");
+        if (this != &other) {
+            releaseMemory(this->base_);
+            this->allocatedBlockCount_ = other.getAllocatedBlockCount();
+            void* newBase = std::realloc(this->base_, other.getAllocatedCapacitySize());
+            if (newBase == nullptr) {
+				throw std::bad_alloc();
+			}
+            this->base_ = static_cast<BlockType*>(newBase);
+            this->end_ = this->base_ + this->allocatedBlockCount_;
+            this->limit_ = this->base_ + (other.limit_ - other.base_);
+            for (size_t i = 0; i < this->allocatedBlockCount_ - 1; ++i) {
+                //BlockType* adr = this->base_ + i;
+                //BlockType* adr = this->getBlockAt(other.base_ + i);
+                //placement_new(adr);
+
+			}
+            return *this;
+		}
     }
 
     template<typename BlockType>
