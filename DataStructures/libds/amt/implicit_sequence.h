@@ -268,7 +268,7 @@ namespace ds::amt {
     template <typename DataType>
     DataType& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator*()
     {
-		return this->sequence_->access(this->position_);
+		return this->sequence_->access(this->position_)->data_;
     }
 
     template <typename DataType>
