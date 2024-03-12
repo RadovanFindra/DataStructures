@@ -70,13 +70,18 @@ namespace ds::mm {
     CompactMemoryManager<BlockType>::CompactMemoryManager(const CompactMemoryManager<BlockType>& other) :
         CompactMemoryManager(other.getAllocatedBlockCount())
     {
-        // TODO 02
+        this->assign(other);
     }
 
     template<typename BlockType>
     CompactMemoryManager<BlockType>::~CompactMemoryManager()
     {
-        // TODO 02
+        this->clear();
+        std::free(this->base_);
+        this->base_- = nullptr;
+        this->end_ = nullptr;
+        this->limit_ = nullptr;
+        this->allocatedBlockCount_ = 0;
     }
 
     template<typename BlockType>
@@ -140,23 +145,17 @@ namespace ds::mm {
     (const CompactMemoryManager<BlockType>& other)
     {
         if (this != &other) {
-            releaseMemory(this->base_);
-            this->allocatedBlockCount_ = other.getAllocatedBlockCount();
-            void* newBase = std::realloc(this->base_, other.getAllocatedCapacitySize());
-            if (newBase == nullptr) {
-				throw std::bad_alloc();
+            this->clear();
+            this->changeCapacity(other.getCapacity());
+            for (size_t i = 0; i < other.allocatedBlockCount_; ++i) {
+				BlockType* adr = other.base_ + i;
+                placement_copy(this->base_ + i, *adr);
 			}
-            this->base_ = static_cast<BlockType*>(newBase);
+            this->allocatedBlockCount_ = other.allocatedBlockCount_;
             this->end_ = this->base_ + this->allocatedBlockCount_;
-            this->limit_ = this->base_ + (other.limit_ - other.base_);
-            for (size_t i = 0; i < this->allocatedBlockCount_ - 1; ++i) {
-                //BlockType* adr = this->base_ + i;
-                //BlockType* adr = this->getBlockAt(other.base_ + i);
-                //placement_new(adr);
-
-			}
-            return *this;
+            
 		}
+        return *this;
     }
 
     template<typename BlockType>
