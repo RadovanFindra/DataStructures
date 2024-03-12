@@ -187,9 +187,10 @@ namespace ds::mm {
 		}
         if (newBase != this->base_) {
             this->base_ = static_cast<BlockType*>(newBase);
-            this->limit_ = this->base_ + newCapacity;
             this->end_ = this->base_ + this->allocatedBlockCount_;
         }
+        this->limit_ = this->base_ + newCapacity;
+ 
     }
 
     template<typename BlockType>
