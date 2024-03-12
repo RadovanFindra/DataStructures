@@ -78,7 +78,7 @@ namespace ds::mm {
     {
         this->clear();
         std::free(this->base_);
-        this->base_- = nullptr;
+        this->base_ = nullptr;
         this->end_ = nullptr;
         this->limit_ = nullptr;
         this->allocatedBlockCount_ = 0;
