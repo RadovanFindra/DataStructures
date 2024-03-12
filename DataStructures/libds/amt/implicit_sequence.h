@@ -241,9 +241,8 @@ namespace ds::amt {
     template <typename DataType>
     typename ImplicitSequence<DataType>::ImplicitSequenceIterator& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator++()
     {
-		// TODO 03
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		++this->position_;
+		return *this;
     }
 
     template <typename DataType>
@@ -257,9 +256,7 @@ namespace ds::amt {
     template <typename DataType>
     bool ImplicitSequence<DataType>::ImplicitSequenceIterator::operator==(const ImplicitSequenceIterator& other) const
     {
-		// TODO 03
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		return this->position_ == other.position_ && this->sequence_ == other.sequence_;
     }
 
     template <typename DataType>
@@ -271,9 +268,7 @@ namespace ds::amt {
     template <typename DataType>
     DataType& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator*()
     {
-		// TODO 03
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		return this->sequence_->access(this->position_);
     }
 
     template <typename DataType>
