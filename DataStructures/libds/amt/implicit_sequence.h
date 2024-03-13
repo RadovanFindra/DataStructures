@@ -46,7 +46,7 @@ namespace ds::amt {
 
 	public:
 		class ImplicitSequenceIterator
-	    {
+		{
 		public:
 			ImplicitSequenceIterator(ImplicitSequence<DataType>* sequence, size_t index);
 			ImplicitSequenceIterator(const ImplicitSequenceIterator& other);
@@ -89,226 +89,231 @@ namespace ds::amt {
 	//----------
 
 	template<typename DataType>
-    ImplicitSequence<DataType>::ImplicitSequence(size_t initialSize, bool initBlocks):
+	ImplicitSequence<DataType>::ImplicitSequence(size_t initialSize, bool initBlocks) :
 		ImplicitAMS<DataType>(initialSize, initBlocks)
 	{
 	}
 
 	template<typename DataType>
-    ImplicitSequence<DataType>::ImplicitSequence(const ImplicitSequence<DataType>& other):
+	ImplicitSequence<DataType>::ImplicitSequence(const ImplicitSequence<DataType>& other) :
 		ImplicitAMS<DataType>::ImplicitAbstractMemoryStructure(other)
 	{
 	}
 
 	template<typename DataType>
-    size_t ImplicitSequence<DataType>::calculateIndex(BlockType& block)
+	size_t ImplicitSequence<DataType>::calculateIndex(BlockType& block)
 	{
 		return this->getMemoryManager()->calculateIndex(block);
 	}
 
 	template<typename DataType>
-    typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::accessFirst() const
-    {
-
-		return this->size() > 0 ? & this->getMemoryManager()->getBlockAt(0): nullptr;
+	typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::accessFirst() const
+	{
+		return this->size() > 0 ? &this->getMemoryManager()->getBlockAt(0) : nullptr; //BlockType&
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::accessLast() const
-    {
+	{
 		return this->size() > 0 ? &this->getMemoryManager()->getBlockAt(this->size() - 1) : nullptr;
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::access(size_t index) const
-    {
-		return index < this->size() ? &this->getMemoryManager()->getBlockAt(index) : nullptr;
+	{
+		return index < this->size() ? &this->getMemoryManager()->getBlockAt(index) : nullptr; //BlockType&
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::accessNext(const BlockType& block) const
-    {
+	{
 		size_t index = this->indexOfNext(this->getMemoryManager()->calculateIndex(block));
 		return index != INVALID_INDEX ? &this->getMemoryManager()->getBlockAt(index) : nullptr;
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType* ImplicitSequence<DataType>::accessPrevious(const BlockType& block) const
-    {
+	{
 		size_t index = this->indexOfPrevious(this->getMemoryManager()->calculateIndex(block));
 		return index != INVALID_INDEX ? &this->getMemoryManager()->getBlockAt(index) : nullptr;
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType& ImplicitSequence<DataType>::insertFirst()
-    {
+	{
 		return *this->getMemoryManager()->allocateMemoryAt(0);
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType& ImplicitSequence<DataType>::insertLast()
-    {
+	{
 		return *this->getMemoryManager()->allocateMemory();
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType& ImplicitSequence<DataType>::insert(size_t index)
-    {
+	{
 		return *this->getMemoryManager()->allocateMemoryAt(index);
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType& ImplicitSequence<DataType>::insertAfter(BlockType& block)
-    {
+	{
 		size_t index = this->getMemoryManager()->calculateIndex(block) + 1;
 		return *this->getMemoryManager()->allocateMemoryAt(index);
 	}
 
 	template<typename DataType>
 	typename ImplicitSequence<DataType>::BlockType& ImplicitSequence<DataType>::insertBefore(BlockType& block)
-    {
+	{
 		size_t index = this->getMemoryManager()->calculateIndex(block);
 		return *this->getMemoryManager()->allocateMemoryAt(index);
-
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::removeFirst()
+	void ImplicitSequence<DataType>::removeFirst()
 	{
 		this->getMemoryManager()->releaseMemoryAt(0);
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::removeLast()
+	void ImplicitSequence<DataType>::removeLast()
 	{
 		this->getMemoryManager()->releaseMemory();
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::remove(size_t index)
+	void ImplicitSequence<DataType>::remove(size_t index)
 	{
 		this->getMemoryManager()->releaseMemoryAt(index);
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::removeNext(const BlockType& block)
+	void ImplicitSequence<DataType>::removeNext(const BlockType& block)
 	{
 		size_t index = this->indexOfNext(this->getMemoryManager()->calculateIndex(block));
 		this->getMemoryManager()->releaseMemoryAt(index);
-		
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::removePrevious(const BlockType& block)
+	void ImplicitSequence<DataType>::removePrevious(const BlockType& block)
 	{
 		size_t index = this->indexOfPrevious(this->getMemoryManager()->calculateIndex(block));
-		this->getMemoryManager()->releaseMemoryAt(index);;
+		this->getMemoryManager()->releaseMemoryAt(index);
 	}
 
 	template<typename DataType>
-    void ImplicitSequence<DataType>::reserveCapacity(size_t capacity)
+	void ImplicitSequence<DataType>::reserveCapacity(size_t capacity)
 	{
 		this->getMemoryManager()->changeCapacity(capacity);
 	}
 
 	template<typename DataType>
-    size_t ImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const
+	size_t ImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const
 	{
-		return currentIndex + 1 < this->size() + 1 ? currentIndex + 1 : INVALID_INDEX;
+		return currentIndex + 1 < this->size() ? currentIndex + 1 : INVALID_INDEX;
 	}
 
 	template<typename DataType>
-    size_t ImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const
+	size_t ImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const
 	{
 		return currentIndex > 0 ? currentIndex - 1 : INVALID_INDEX;
 	}
 
-    template <typename DataType>
-    ImplicitSequence<DataType>::ImplicitSequenceIterator::ImplicitSequenceIterator
-        (ImplicitSequence<DataType>* sequence, size_t index) :
-		    sequence_(sequence),
-            position_(index)
-    {
-    }
+	template <typename DataType>
+	ImplicitSequence<DataType>::ImplicitSequenceIterator::ImplicitSequenceIterator
+	(ImplicitSequence<DataType>* sequence, size_t index) :
+		sequence_(sequence),
+		position_(index)
+	{
+	}
 
-    template <typename DataType>
-    ImplicitSequence<DataType>::ImplicitSequenceIterator::ImplicitSequenceIterator
-        (const ImplicitSequenceIterator& other) :
-		    sequence_(other.sequence_), position_(other.position_)
-    {
-    }
+	template <typename DataType>
+	ImplicitSequence<DataType>::ImplicitSequenceIterator::ImplicitSequenceIterator
+	(const ImplicitSequenceIterator& other) :
+		sequence_(other.sequence_), position_(other.position_)
+	{
+	}
 
-    template <typename DataType>
-    typename ImplicitSequence<DataType>::ImplicitSequenceIterator& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator++()
-    {
+	template <typename DataType>
+	typename ImplicitSequence<DataType>::ImplicitSequenceIterator& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator++()
+	{
 		++this->position_;
 		return *this;
-    }
+	}
 
-    template <typename DataType>
+	template <typename DataType>
 	typename ImplicitSequence<DataType>::ImplicitSequenceIterator ImplicitSequence<DataType>::ImplicitSequenceIterator::operator++(int)
-    {
+	{
 		ImplicitSequenceIterator tmp(*this);
-	    this->operator++();
-	    return tmp;
-    }
+		this->operator++();
+		return tmp;
+	}
 
-    template <typename DataType>
-    bool ImplicitSequence<DataType>::ImplicitSequenceIterator::operator==(const ImplicitSequenceIterator& other) const
-    {
+	template <typename DataType>
+	bool ImplicitSequence<DataType>::ImplicitSequenceIterator::operator==(const ImplicitSequenceIterator& other) const
+	{
 		return this->position_ == other.position_ && this->sequence_ == other.sequence_;
-    }
+	}
 
-    template <typename DataType>
-    bool ImplicitSequence<DataType>::ImplicitSequenceIterator::operator!=(const ImplicitSequenceIterator& other) const
-    {
+	template <typename DataType>
+	bool ImplicitSequence<DataType>::ImplicitSequenceIterator::operator!=(const ImplicitSequenceIterator& other) const
+	{
 		return sequence_ != other.sequence_ || position_ != other.position_;
-    }
+	}
 
-    template <typename DataType>
-    DataType& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator*()
-    {
+	template <typename DataType>
+	DataType& ImplicitSequence<DataType>::ImplicitSequenceIterator::operator*()
+	{
 		return this->sequence_->access(this->position_)->data_;
-    }
+	}
 
-    template <typename DataType>
+	template <typename DataType>
 	typename ImplicitSequence<DataType>::ImplicitSequenceIterator ImplicitSequence<DataType>::begin()
-    {
+	{
 		return ImplicitSequenceIterator(this, 0);
-    }
+	}
 
-    template <typename DataType>
+	template <typename DataType>
 	typename ImplicitSequence<DataType>::ImplicitSequenceIterator ImplicitSequence<DataType>::end()
-    {
+	{
 		return ImplicitSequenceIterator(this, this->size());
-    }
+	}
 
-    template<typename DataType>
-    CyclicImplicitSequence<DataType>::CyclicImplicitSequence():
+	template<typename DataType>
+	CyclicImplicitSequence<DataType>::CyclicImplicitSequence() :
 		IS<DataType>()
 	{
 	}
 
 	template<typename DataType>
-    CyclicImplicitSequence<DataType>::CyclicImplicitSequence(size_t initCapacity, bool initBlocks):
+	CyclicImplicitSequence<DataType>::CyclicImplicitSequence(size_t initCapacity, bool initBlocks) :
 		IS<DataType>(initCapacity, initBlocks)
 	{
 	}
 
 	template<typename DataType>
-    size_t CyclicImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const
+	size_t CyclicImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const //doma dokonèi 2 riadky kodu cca
 	{
-		// TODO 03
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		size_t velkost = this->size();
+		if (velkost != 0) {
+			return currentIndex >= velkost - 1 ? 0 : currentIndex + 1;
+		}
+		else {
+			return INVALID_INDEX;
+		}
 	}
 
 	template<typename DataType>
-    size_t CyclicImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const
+	size_t CyclicImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const //doma dokonèi 2 riadky kodu cca
 	{
-		// TODO 03
-		// po implementacii vymazte vyhodenie vynimky!
-		throw std::runtime_error("Not implemented yet");
+		size_t velkost = this->size();
+		if (velkost != 0) {
+			return currentIndex <= 0 ? velkost - 1 : currentIndex - 1;
+		}
+		else {
+			return INVALID_INDEX;
+		}
 	}
 
 }
