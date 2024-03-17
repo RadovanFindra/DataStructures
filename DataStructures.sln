@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DataStructures", "DataStructures\DataStructures.vcxproj", "{5C7E2568-8687-4C1E-B0C4-E57BD48EB633}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SP", "SP\SP.vcxproj", "{3C6CC760-62D4-4466-8606-ED266458EC10}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5C7E2568-8687-4C1E-B0C4-E57BD48EB633} = {5C7E2568-8687-4C1E-B0C4-E57BD48EB633}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

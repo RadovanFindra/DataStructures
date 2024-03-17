@@ -1434,4 +1434,5 @@ int main(array<Sys::String^>^ args)
 	WF::Application::SetCompatibleTextRenderingDefault(false);
 	gui::MainForm mainForm(tests, analyzers);
 	WF::Application::Run(% mainForm);
+
 }

@@ -129,7 +129,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="csvLoader.cpp" />
     <ClCompile Include="SP.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="RT.csv" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="csvLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
