@@ -6,7 +6,7 @@
 int main()
 {
     ds::amt::ImplicitSequence<int> is;
-    
+
     CsvLoader loader("RT.csv");
     const std::vector<Line>& lines = loader.getLines();
 
@@ -17,4 +17,6 @@ int main()
         std::cout << "Time: " << line.time << " sec" << std::endl;
         std::cout << std::endl;
     }
+
+    return 0;
 }

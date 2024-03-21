@@ -8,16 +8,19 @@ struct Line {
     std::string prefix;
     std::string metric;
     std::string next_hop;
-    int time; 
+    unsigned int  time; 
 };
+
 
 class CsvLoader {
 private:
     std::vector<Line> lines;
-
+    
+    unsigned int prevodCasuNaSekundy(std::string& cas);
 public:
     CsvLoader(const std::string& filename);
     const std::vector<Line>& getLines() const;
+    void load();
 };
 
 
