@@ -143,6 +143,11 @@ int main()
 
         return userIPBits == prefixBits;
     };
+
+    std::function<bool(const RoutingTableEntry&, const std::string&)> matchWithTime = [&](const RoutingTableEntry& entry, const std::string& userDefined) {
+        return entry.time > std::stoi(userDefined);
+        
+        };
     std::vector<RoutingTableEntry> processed = process_data(routingTableData.begin(), routingTableData.end(), matchWithAddress, userIn);
 
     for (const auto& entry : processed) {
