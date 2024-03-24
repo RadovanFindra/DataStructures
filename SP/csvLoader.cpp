@@ -12,11 +12,11 @@ CsvLoader::CsvLoader(const std::string& filename) {
         std::cerr << "Error while opening .csv file." << std::endl;
         return;
     }
-    std::string firstLine;
-    std::getline(file, firstLine);
-
-
     std::string line;
+    std::getline(file, line);
+
+
+    
     while (std::getline(file, line)) {
         std::istringstream iss(line);
         std::string source, prefix, metric, next_hop, time_str;
@@ -26,9 +26,20 @@ CsvLoader::CsvLoader(const std::string& filename) {
             std::getline(iss, metric, ';') &&
             std::getline(iss, next_hop, ';') &&
             std::getline(iss, time_str, ';')) {
+
+            std::string address;
+            int networkBits;
+            size_t slashPos = prefix.find('/');
+            address = prefix.substr(0, slashPos);
+
+            networkBits = std::stoi(prefix.substr(slashPos + 1));
+
+            next_hop.erase(0,4);
             unsigned int time = prevodCasuNaSekundy(time_str);
 
-            lines.push_back({ source, prefix, metric, next_hop, time });
+
+            lines.push_back({source, { address, networkBits }, metric, next_hop, time
+        });
         }
         else {
             std::cerr << "Error while reading line on .csv file " << std::endl;
@@ -82,7 +93,10 @@ unsigned int CsvLoader::prevodCasuNaSekundy(std::string& cas) {
     }
     return sekundy;
 }
-const std::vector<Line>& CsvLoader::getLines() const {
+
+
+
+ std::vector<Line>& CsvLoader::getLines() {
     return lines;
 }
 

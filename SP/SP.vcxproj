@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Algoritmus.cpp" />
     <ClCompile Include="csvLoader.cpp" />
     <ClCompile Include="SP.cpp" />
   </ItemGroup>
@@ -136,6 +137,7 @@
     <None Include="RT.csv" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Algoritmus.h" />
     <ClInclude Include="csvLoader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

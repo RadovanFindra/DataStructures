@@ -293,7 +293,7 @@ namespace ds::amt {
 	}
 
 	template<typename DataType>
-	size_t CyclicImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const //doma dokonËiù 2 riadky kodu cca
+	size_t CyclicImplicitSequence<DataType>::indexOfNext(size_t currentIndex) const //doma dokon√®i¬ù 2 riadky kodu cca
 	{
 		size_t velkost = this->size();
 		if (velkost != 0) {
@@ -305,7 +305,7 @@ namespace ds::amt {
 	}
 
 	template<typename DataType>
-	size_t CyclicImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const //doma dokonËiù 2 riadky kodu cca
+	size_t CyclicImplicitSequence<DataType>::indexOfPrevious(size_t currentIndex) const //doma dokon√®i¬ù 2 riadky kodu cca
 	{
 		size_t velkost = this->size();
 		if (velkost != 0) {
