@@ -115,6 +115,16 @@ std::bitset<32> ipToBits(const std::string& ipAddress) {
     return std::bitset<32>(ipUint);
 }
 
+std::pair<time_t, time_t> parseTimeRange(const std::string& timeRange) {
+    std::istringstream ss(timeRange);
+    std::string token;
+    std::getline(ss, token, '-');
+    time_t startTime = std::stoi(token);
+    std::getline(ss, token);
+    time_t endTime = std::stoi(token);
+    return std::make_pair(startTime, endTime);
+}
+
 template<typename Iterator>
 std::vector<RoutingTableEntry> process_data(Iterator begin, Iterator end, std::function<bool(const typename Iterator::value_type&, const std::string&)> predicate, std::string userDefined) {
 	std::vector<RoutingTableEntry> matched;
@@ -130,28 +140,38 @@ int main()
 {
     ds::amt::ImplicitSequence<int> is;
     std::vector<RoutingTableEntry> routingTableData = CsvLoader::load("RT.csv");
-    std::string  userIn = "5.83.124.13";
+    std::string  userIn = "1.1.128.1";
 
-    std::function<bool(const RoutingTableEntry&, const std::string&)> matchWithAddress = [&](const RoutingTableEntry& entry, const std::string& userDefined) {
+    std::function<bool(const RoutingTableEntry&, const std::string&)> matchWithAddress;
+    matchWithAddress = [&](const RoutingTableEntry& entry, const std::string& userDefined)
+    {
+	    std::bitset<32> userIPBits = ipToBits(userDefined);
+	    std::bitset<32> prefixBits = ipToBits(entry.prefix.address);
 
-        std::bitset<32> userIPBits = ipToBits(userDefined);
-        std::bitset<32> prefixBits = ipToBits(entry.prefix.address);
 
-        
-        userIPBits >>= (32 - entry.prefix.netMask);
-        prefixBits >>= (32 - entry.prefix.netMask);
+	    userIPBits >>= (32 - entry.prefix.netMask);
+	    prefixBits >>= (32 - entry.prefix.netMask);
 
-        return userIPBits == prefixBits;
+	    return userIPBits == prefixBits;
     };
-
-    std::function<bool(const RoutingTableEntry&, const std::string&)> matchWithTime = [&](const RoutingTableEntry& entry, const std::string& userDefined) {
-        return entry.time > std::stoi(userDefined);
-        
+    
+    std::function<bool(const RoutingTableEntry&, std::string)> matchWithTime = [&](const RoutingTableEntry& entry, const std::string& userDefined) {
+        auto timeRange = parseTimeRange(userIn);
+        time_t startTime = timeRange.first;
+        time_t endTime = timeRange.second;
+        return entry.time >= startTime && entry.time <= endTime;
         };
-    std::vector<RoutingTableEntry> processed = process_data(routingTableData.begin(), routingTableData.end(), matchWithAddress, userIn);
 
-    for (const auto& entry : processed) {
+	std::vector<RoutingTableEntry> processedIP   = process_data(routingTableData.begin(), routingTableData.end(), matchWithAddress, userIn);
+    userIn = "10-3600";
+    std::vector<RoutingTableEntry> processedTime = process_data(routingTableData.begin(), routingTableData.end(), matchWithTime   , userIn);
+
+    for (const auto& entry : processedIP) {
         std::cout << "Address: " << entry.prefix.address << "/" << entry.prefix.netMask << std::endl;
+    }
+    std::cout << std::endl;
+    for (const auto& entry : processedTime) {
+        std::cout << "Address: " << entry.prefix.address << "/" << entry.prefix.netMask << "           " << entry.time << std::endl;
     }
     return 0;
 }
