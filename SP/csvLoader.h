@@ -8,7 +8,7 @@ struct IPAddress {
     int netMask;
 };
 
-struct Line {
+struct RoutingTableEntry {
     std::string source;
     IPAddress prefix;
     std::string metric;
@@ -18,12 +18,9 @@ struct Line {
 
 class CsvLoader {
 private:
-    std::vector<Line> lines;
-    unsigned int prevodCasuNaSekundy(std::string& cas);
+    static unsigned int strToSec(std::string& time);
 public:
-    CsvLoader(const std::string& filename);
-    std::vector<Line>& getLines();
-    void load();
+    static std::vector<RoutingTableEntry> load(const std::string& filename);
 };
 
 
